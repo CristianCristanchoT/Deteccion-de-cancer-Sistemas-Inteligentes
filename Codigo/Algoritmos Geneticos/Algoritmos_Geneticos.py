@@ -73,7 +73,7 @@ print(f'Datos en Valid: {X_valid.shape[0]}')
 print(f'Datos en Test: {X_test.shape[0]}')
 
 # Instanciamos el modelo1 (reg Logistic)
-model = linear_model.LogisticRegression(solver='lbfgs', multi_class='auto')
+model2 = linear_model.LogisticRegression(solver='lbfgs', multi_class='auto')
 
 # Modelo 2 Red Neuronal
 
@@ -81,7 +81,7 @@ input_layer = Input(shape=(9,))
 layer = Dense(16, activation='relu')(input_layer)
 layer = Dropout(0.2)(layer)
 out_layer=Dense(1,activation='sigmoid')(layer)
-cancer_detection_model = Model(inputs=input_layer,outputs=out_layer)
+model = Model(inputs=input_layer,outputs=out_layer)
 
 METRICS = [
     Recall(name='recall'),
@@ -89,7 +89,7 @@ METRICS = [
     Precision(name='precision')
 ]
 
-cancer_detection_model.compile(
+model.compile(
     optimizer='adam',
     loss='binary_crossentropy',
     metrics=METRICS)
@@ -116,7 +116,7 @@ def evaluate(individual):
     else:
         feature_idx = np.where(np_ind == 1)[0]
         fitness = calculate_fitness(
-            model, X_numpy[:, feature_idx], Y_numpy
+            model2, X_numpy[:, feature_idx], Y_numpy
         )
         if verbose:
             print("Individuo: {}  Fitness Score: {} ".format(individual, fitness))
@@ -142,7 +142,7 @@ toolbox.register("evaluate", evaluate) # Evaluacion
 N_POP = 100 # Tamaño de la población
 CXPB = 0.5 # Probabilidad de crossover
 MUTPB = 0.2 # Probabilidad de mutación
-NGEN = 10 # Cantidad de generaciones
+NGEN = 30 # Cantidad de generaciones
 
 print(
     "Tamaño población: {}\nProbabilidad de crossover: {}\nProbabilida de mutación: {}\nGeneraciones totales: {}".format(
@@ -224,8 +224,7 @@ for g in range(NGEN):
 plt.figure(figsize=(10,8))
 front = np.array([(c['gen'], c['avg']) for c in stats_records])
 plt.plot(front[:,0][1:], front[:,1][1:], "-bo")
-plt.title('Evolución Puntaje F1')
-plt.title('Evolución Puntaje F1')
+plt.title('Evolución F1')
 plt.axis("tight")
 plt.legend()
 plt.xlabel("Generación")
